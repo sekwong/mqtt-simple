@@ -12,3 +12,17 @@ Add or delete account.
 Remove
 
 ```$ mosca rmuser myuser --credentials ./config/credentials.json```
+
+
+## Stack plan ##
+
+
+```
+                                
+                              |-- broker1 --|
+                              |             |
+internet === loadbalance ===  |-- broker2 --| === persistence storage
+                              |    ...      |
+                              |-- brokerx --|
+
+```
