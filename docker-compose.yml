@@ -1,6 +1,6 @@
 version: '3'
 services:
-  mosca:
+  mosca_1:
     build: .
     image: mosca:dev
     environment:
@@ -8,10 +8,44 @@ services:
       REDIS: redis
     depends_on:
       - redis
-    ports:
-      - 1883:1883
-      - 80:80
+    expose:
+      - 1883
+    volumes:
+      - ./config:/usr/src/app/config
+  mosca_2:
+    build: .
+    image: mosca:dev
+    environment:
+      ID: mosca_2
+      REDIS: redis
+    depends_on:
+      - redis
+    expose:
+      - 1883
+    volumes:
+      - ./config:/usr/src/app/config
+  mosca_3:
+    build: .
+    image: mosca:dev
+    environment:
+      ID: mosca_3
+      REDIS: redis
+    depends_on:
+      - redis
+    expose:
+      - 1883
     volumes:
       - ./config:/usr/src/app/config
   redis:
     image: redis:alpine
+  haproxy:
+    depends_on:
+      - mosca_1
+      - mosca_2
+      - mosca_3
+    ports:
+      - 1883:1883
+      - 1936:1936
+    image: haproxy:alpine
+    volumes:
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
